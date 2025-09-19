@@ -8,7 +8,14 @@ Terdiri dari dua jenis permainan:
 
 ---
 
-## 🚀 Cara Pakai
+## 🎮 Mainkan Sekarang
+
+- 👉 [Mulai Kuis MCQ](https://ahmadzaki01-sketch.github.io/taxonomy-game/mcq.html)  
+- 👉 [Mulai Game Drag & Drop](https://ahmadzaki01-sketch.github.io/taxonomy-game/dragdrop.html)  
+
+---
+
+## 🚀 Cara Pakai (untuk Guru)
 
 ### 1. Setup Google Sheets
 1. Buat spreadsheet baru → beri nama misalnya `Taxonomy Results`.  

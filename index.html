@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Taxonomy Learning Games</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg,#d0e6ff,#f5f7fa);
+      margin: 0;
+    }
+    .menu {
+      text-align: center;
+      background: #fff;
+      padding: 40px;
+      border-radius: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      max-width: 420px;
+    }
+    .menu h1 {
+      margin-bottom: 24px;
+      color: #2a4d7d;
+    }
+    .menu p {
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #444;
+    }
+    .menu button {
+      display: block;
+      width: 100%;
+      margin: 12px 0;
+      padding: 14px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .mcq-btn {
+      background: #2a72d6;
+    }
+    .mcq-btn:hover {
+      background: #1c54a5;
+      transform: translateY(-2px);
+    }
+    .drag-btn {
+      background: #ff914d;
+    }
+    .drag-btn:hover {
+      background: #e66e1a;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="menu">
+    <h1>🧩 Taxonomy Learning Games</h1>
+    <p>Pilih jenis game yang ingin dimainkan:</p>
+    <button class="mcq-btn" onclick="location.href='mcq.html'">📘 Kuis MCQ (30 soal)</button>
+    <button class="drag-btn" onclick="location.href='dragdrop.html'">🔗 Drag & Drop (20 set)</button>
+  </div>
+</body>
+</html>
