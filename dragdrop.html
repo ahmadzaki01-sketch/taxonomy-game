@@ -42,45 +42,25 @@
 // Data Taksonomi (20 set)
 // =====================
 const gamesets = [
-  // 1. Manusia
   ["Eukarya","Animalia","Chordata","Mammalia","Primata","Hominidae","Homo","Homo sapiens"],
-  // 2. Kucing domestik
   ["Eukarya","Animalia","Chordata","Mammalia","Carnivora","Felidae","Felis","Felis catus"],
-  // 3. Harimau
   ["Eukarya","Animalia","Chordata","Mammalia","Carnivora","Felidae","Panthera","Panthera tigris"],
-  // 4. Paus biru
   ["Eukarya","Animalia","Chordata","Mammalia","Cetacea","Balaenopteridae","Balaenoptera","Balaenoptera musculus"],
-  // 5. Burung merpati
   ["Eukarya","Animalia","Chordata","Aves","Columbiformes","Columbidae","Columba","Columba livia"],
-  // 6. Katak hijau
   ["Eukarya","Animalia","Chordata","Amphibia","Anura","Ranidae","Rana","Rana pipiens"],
-  // 7. Ikan mas
   ["Eukarya","Animalia","Chordata","Osteichthyes","Cypriniformes","Cyprinidae","Cyprinus","Cyprinus carpio"],
-  // 8. Hiu putih besar
   ["Eukarya","Animalia","Chordata","Chondrichthyes","Lamniformes","Lamnidae","Carcharodon","Carcharodon carcharias"],
-  // 9. Cacing tanah
   ["Eukarya","Animalia","Annelida","Clitellata","Haplotaxida","Lumbricidae","Lumbricus","Lumbricus terrestris"],
-  // 10. Belalang
   ["Eukarya","Animalia","Arthropoda","Insecta","Orthoptera","Acrididae","Locusta","Locusta migratoria"],
-  // 11. Bintang laut
   ["Eukarya","Animalia","Echinodermata","Asteroidea","Forcipulatida","Asteriidae","Asterias","Asterias rubens"],
-  // 12. Ubur-ubur bulan
   ["Eukarya","Animalia","Cnidaria","Scyphozoa","Semaeostomeae","Ulmaridae","Aurelia","Aurelia aurita"],
-  // 13. Lumut hati
   ["Eukarya","Plantae","Bryophyta","Marchantiopsida","Marchantiales","Marchantiaceae","Marchantia","Marchantia polymorpha"],
-  // 14. Paku tanduk rusa
   ["Eukarya","Plantae","Pteridophyta","Polypodiopsida","Polypodiales","Polypodiaceae","Platycerium","Platycerium bifurcatum"],
-  // 15. Padi
   ["Eukarya","Plantae","Angiospermae","Monokotil","Poales","Poaceae","Oryza","Oryza sativa"],
-  // 16. Jagung
   ["Eukarya","Plantae","Angiospermae","Monokotil","Poales","Poaceae","Zea","Zea mays"],
-  // 17. Kacang tanah
   ["Eukarya","Plantae","Angiospermae","Eudikotil","Fabales","Fabaceae","Arachis","Arachis hypogaea"],
-  // 18. Tomat
   ["Eukarya","Plantae","Angiospermae","Eudikotil","Solanales","Solanaceae","Solanum","Solanum lycopersicum"],
-  // 19. Mawar
   ["Eukarya","Plantae","Angiospermae","Eudikotil","Rosales","Rosaceae","Rosa","Rosa chinensis"],
-  // 20. Pinus
   ["Eukarya","Plantae","Gymnospermae","Pinopsida","Pinales","Pinaceae","Pinus","Pinus merkusii"]
 ];
 
@@ -102,7 +82,6 @@ function loadSet(){
   document.getElementById('pool').innerHTML='';
   document.getElementById('targets').innerHTML='';
   const items = gamesets[currentSet].slice();
-  // acak pool
   const shuffled = items.slice().sort(()=>Math.random()-0.5);
 
   shuffled.forEach((it,i)=>{
