@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Game Drag & Drop Taksonomi</title>
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<div class="container">
+  <h1>Game Susun Taksonomi</h1>
+
+  <!-- Login -->
+  <div id="start">
+    <h2>Login Siswa</h2>
+    <label>Nama: <input id="name" required></label><br>
+    <label>Kelas: <input id="kelas" required></label><br>
+    <label>No Absen: <input id="absen" type="number" required></label><br>
+    <button id="begin">Mulai</button>
+  </div>
+
+  <!-- Game -->
+  <div id="game" style="display:none;">
+    <p>Susun urutan taksonomi dari <b>Domain</b> hingga <b>Spesies</b>.</p>
+    <div class="board">
+      <div id="pool" class="pool"></div>
+      <div id="targets" class="targets"></div>
+    </div>
+    <button id="check">Cek Jawaban</button>
+  </div>
+
+  <!-- Hasil -->
+  <div id="result" style="display:none;">
+    <h2>Hasil</h2>
+    <p id="resText"></p>
+    <button id="send">Kirim Hasil</button>
+  </div>
+</div>
+
+<script>
+// =====================
+// Data Taksonomi (20 set)
+// =====================
+const gamesets = [
+  // 1. Manusia
+  ["Eukarya","Animalia","Chordata","Mammalia","Primata","Hominidae","Homo","Homo sapiens"],
+  // 2. Kucing domestik
+  ["Eukarya","Animalia","Chordata","Mammalia","Carnivora","Felidae","Felis","Felis catus"],
+  // 3. Harimau
+  ["Eukarya","Animalia","Chordata","Mammalia","Carnivora","Felidae","Panthera","Panthera tigris"],
+  // 4. Paus biru
+  ["Eukarya","Animalia","Chordata","Mammalia","Cetacea","Balaenopteridae","Balaenoptera","Balaenoptera musculus"],
+  // 5. Burung merpati
+  ["Eukarya","Animalia","Chordata","Aves","Columbiformes","Columbidae","Columba","Columba livia"],
+  // 6. Katak hijau
+  ["Eukarya","Animalia","Chordata","Amphibia","Anura","Ranidae","Rana","Rana pipiens"],
+  // 7. Ikan mas
+  ["Eukarya","Animalia","Chordata","Osteichthyes","Cypriniformes","Cyprinidae","Cyprinus","Cyprinus carpio"],
+  // 8. Hiu putih besar
+  ["Eukarya","Animalia","Chordata","Chondrichthyes","Lamniformes","Lamnidae","Carcharodon","Carcharodon carcharias"],
+  // 9. Cacing tanah
+  ["Eukarya","Animalia","Annelida","Clitellata","Haplotaxida","Lumbricidae","Lumbricus","Lumbricus terrestris"],
+  // 10. Belalang
+  ["Eukarya","Animalia","Arthropoda","Insecta","Orthoptera","Acrididae","Locusta","Locusta migratoria"],
+  // 11. Bintang laut
+  ["Eukarya","Animalia","Echinodermata","Asteroidea","Forcipulatida","Asteriidae","Asterias","Asterias rubens"],
+  // 12. Ubur-ubur bulan
+  ["Eukarya","Animalia","Cnidaria","Scyphozoa","Semaeostomeae","Ulmaridae","Aurelia","Aurelia aurita"],
+  // 13. Lumut hati
+  ["Eukarya","Plantae","Bryophyta","Marchantiopsida","Marchantiales","Marchantiaceae","Marchantia","Marchantia polymorpha"],
+  // 14. Paku tanduk rusa
+  ["Eukarya","Plantae","Pteridophyta","Polypodiopsida","Polypodiales","Polypodiaceae","Platycerium","Platycerium bifurcatum"],
+  // 15. Padi
+  ["Eukarya","Plantae","Angiospermae","Monokotil","Poales","Poaceae","Oryza","Oryza sativa"],
+  // 16. Jagung
+  ["Eukarya","Plantae","Angiospermae","Monokotil","Poales","Poaceae","Zea","Zea mays"],
+  // 17. Kacang tanah
+  ["Eukarya","Plantae","Angiospermae","Eudikotil","Fabales","Fabaceae","Arachis","Arachis hypogaea"],
+  // 18. Tomat
+  ["Eukarya","Plantae","Angiospermae","Eudikotil","Solanales","Solanaceae","Solanum","Solanum lycopersicum"],
+  // 19. Mawar
+  ["Eukarya","Plantae","Angiospermae","Eudikotil","Rosales","Rosaceae","Rosa","Rosa chinensis"],
+  // 20. Pinus
+  ["Eukarya","Plantae","Gymnospermae","Pinopsida","Pinales","Pinaceae","Pinus","Pinus merkusii"]
+];
+
+const terms = ["Domain","Kingdom","Filum/Divisio","Kelas","Ordo","Famili","Genus","Spesies"];
+
+let currentSet = 0;
+let resultDetails = null;
+
+document.getElementById('begin').onclick = ()=>{
+  if(!document.getElementById('name').value.trim()){ alert('Masukkan nama'); return; }
+  if(!document.getElementById('kelas').value.trim()){ alert('Masukkan kelas'); return; }
+  if(!document.getElementById('absen').value.trim()){ alert('Masukkan no absen'); return; }
+  document.getElementById('start').style.display='none';
+  document.getElementById('game').style.display='block';
+  loadSet();
+};
+
+function loadSet(){
+  document.getElementById('pool').innerHTML='';
+  document.getElementById('targets').innerHTML='';
+  const items = gamesets[currentSet].slice();
+  // acak pool
+  const shuffled = items.slice().sort(()=>Math.random()-0.5);
+
+  shuffled.forEach((it,i)=>{
+    const div = document.createElement('div');
+    div.className='item';
+    div.draggable=true;
+    div.id='item'+i;
+    div.innerText=it;
+    div.addEventListener('dragstart', dragStart);
+    document.getElementById('pool').appendChild(div);
+  });
+
+  terms.forEach((t,i)=>{
+    const box = document.createElement('div');
+    box.className='target';
+    box.dataset.index = i;
+    box.innerHTML = `<small>${t}</small><div class="slot" data-index="${i}"></div>`;
+    box.querySelector('.slot').addEventListener('dragover', dragOver);
+    box.querySelector('.slot').addEventListener('drop', dropItem);
+    document.getElementById('targets').appendChild(box);
+  });
+}
+
+function dragStart(e){ e.dataTransfer.setData('text/plain', e.target.id); }
+function dragOver(e){ e.preventDefault(); }
+function dropItem(e){
+  e.preventDefault();
+  const id = e.dataTransfer.getData('text/plain');
+  const el = document.getElementById(id);
+  if(!el) return;
+  const slot = e.currentTarget;
+  if(slot.firstChild) slot.removeChild(slot.firstChild);
+  slot.appendChild(el);
+}
+
+document.getElementById('check').onclick = ()=>{
+  const expected = gamesets[currentSet];
+  let correct=0; const details=[];
+  document.querySelectorAll('.slot').forEach((slot,i)=>{
+    const child=slot.firstChild;
+    const val=child?child.innerText:"";
+    details.push({position:terms[i], placed:val, expected:expected[i]});
+    if(val===expected[i]) correct++;
+  });
+  const score=Math.round((correct/terms.length)*100);
+  resultDetails={score,correct,details,set:currentSet+1};
+
+  document.getElementById('game').style.display='none';
+  document.getElementById('result').style.display='block';
+  document.getElementById('resText').innerText=`Set ${currentSet+1} selesai. Benar: ${correct}/8. Skor: ${score}`;
+};
+
+document.getElementById('send').onclick = ()=>{
+  const payload = {
+    name: document.getElementById('name').value,
+    class: document.getElementById('kelas').value,
+    absen: document.getElementById('absen').value,
+    game: 'dragdrop',
+    score: resultDetails?resultDetails.score:0,
+    duration: 0,
+    details: resultDetails||{}
+  };
+  fetch(https://script.google.com/macros/s/AKfycbxriqMKF5lnhhqS4-O-tPQE48GU14RcPLB3ySCslGdANE4211Jk75-xz7Oh2tiR6vqi/exec, {
+    method:'POST',
+    body: JSON.stringify(payload),
+    headers:{'Content-Type':'application/json'}
+  }).then(r=>r.json()).then(d=>{
+    if(d.status==='success'){
+      alert('Hasil terkirim!');
+      currentSet++;
+      if(currentSet<gamesets.length){
+        document.getElementById('result').style.display='none';
+        document.getElementById('game').style.display='block';
+        loadSet();
+      } else {
+        document.getElementById('resText').innerText+=' | Semua set selesai!';
+      }
+    } else { alert('Error: '+JSON.stringify(d)); }
+  }).catch(e=>alert('Gagal kirim: '+e));
+};
+</script>
+</body>
+</html>

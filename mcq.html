@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Kuis Taksonomi — MCQ</title>
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<div class="container">
+  <h1>Kuis Taksonomi — Pilihan Ganda</h1>
+
+  <!-- Login Screen -->
+  <div id="start-screen">
+    <h2>Login Siswa</h2>
+    <label>Nama: <input id="name" required /></label><br>
+    <label>Kelas: <input id="kelas" required /></label><br>
+    <label>No Absen: <input id="absen" type="number" required /></label><br>
+    <button id="startBtn">Mulai Kuis</button>
+  </div>
+
+  <!-- Quiz Screen -->
+  <div id="quiz" style="display:none;">
+    <div id="hud">
+      <span id="level">Level 1</span>
+      <span id="timer">Waktu: <span id="time">60</span>s</span>
+      <span id="score">Skor: 0</span>
+    </div>
+    <div id="question-box"></div>
+    <div id="choices"></div>
+  </div>
+
+  <!-- Finish Screen -->
+  <div id="finish" style="display:none;">
+    <h2>Hasil</h2>
+    <p id="finalScore"></p>
+    <button id="submitBtn">Kirim Hasil</button>
+  </div>
+</div>
+
+<script>
+// ==========================
+// KONFIGURASI LEVEL
+// ==========================
+const levels = [
+  {level:1, time:60, points:10},
+  {level:2, time:45, points:20},
+  {level:3, time:30, points:30}
+];
+
+// ==========================
+// BANK SOAL (30 Soal)
+// ==========================
+
+// Level 1 — Domain & Kingdom (10 soal)
+const questionsLevel1 = [
+  {q:"Domain manakah yang mencakup organisme bersel dengan inti sejati?", choices:["Bacteria","Archaea","Eukarya","Monera"], a:2},
+  {q:"Kingdom yang memiliki dinding sel dari kitin adalah ...", choices:["Plantae","Fungi","Protista","Animalia"], a:1},
+  {q:"Organisme prokariotik tanpa peptidoglikan pada dinding sel termasuk domain ...", choices:["Archaea","Bacteria","Eukarya","Protista"], a:0},
+  {q:"Kingdom yang mencakup organisme autotrof multiseluler adalah ...", choices:["Animalia","Plantae","Fungi","Protista"], a:1},
+  {q:"Bakteri Escherichia coli termasuk domain ...", choices:["Bacteria","Archaea","Eukarya","Monera"], a:0},
+  {q:"Protista mirip hewan disebut ...", choices:["Protozoa","Ganggang","Jamur lendir","Bakteri"], a:0},
+  {q:"Jamur roti (*Rhizopus stolonifer*) masuk dalam kingdom ...", choices:["Fungi","Plantae","Protista","Monera"], a:1},
+  {q:"Hewan bersel banyak dengan sistem organ kompleks masuk kingdom ...", choices:["Animalia","Plantae","Protista","Fungi"], a:0},
+  {q:"Ganggang hijau (Chlorophyta) dikelompokkan ke dalam kingdom ...", choices:["Fungi","Protista","Plantae","Animalia"], a:1},
+  {q:"Kelompok cyanobacteria termasuk ke dalam domain ...", choices:["Archaea","Bacteria","Eukarya","Protista"], a:1}
+];
+
+// Level 2 — Filum & Divisio (10 soal)
+const questionsLevel2 = [
+  {q:"Ubur-ubur termasuk filum ...", choices:["Porifera","Cnidaria","Echinodermata","Annelida"], a:1},
+  {q:"Bintang laut tergolong filum ...", choices:["Mollusca","Arthropoda","Echinodermata","Chordata"], a:2},
+  {q:"Cacing tanah masuk dalam filum ...", choices:["Nematoda","Annelida","Platyhelminthes","Cnidaria"], a:1},
+  {q:"Siput, kerang, dan gurita termasuk filum ...", choices:["Mollusca","Echinodermata","Annelida","Chordata"], a:0},
+  {q:"Filum yang memiliki notokorda pada tahap perkembangan adalah ...", choices:["Chordata","Echinodermata","Arthropoda","Platyhelminthes"], a:0},
+  {q:"Lumut hati (*Marchantia polymorpha*) termasuk divisio ...", choices:["Bryophyta","Pteridophyta","Spermatophyta","Angiospermae"], a:0},
+  {q:"Paku tanduk rusa termasuk divisio ...", choices:["Bryophyta","Pteridophyta","Spermatophyta","Gymnospermae"], a:1},
+  {q:"Pinus merkusii termasuk kelompok ...", choices:["Monokotil","Gymnospermae","Bryophyta","Pteridophyta"], a:1},
+  {q:"Padi (*Oryza sativa*) termasuk kelompok ...", choices:["Gymnospermae","Angiospermae monokotil","Angiospermae dikotil","Bryophyta"], a:1},
+  {q:"Mangga (*Mangifera indica*) termasuk kelompok ...", choices:["Angiospermae monokotil","Angiospermae dikotil","Pteridophyta","Bryophyta"], a:1}
+];
+
+// Level 3 — Kelas → Ordo → Famili → Genus → Spesies (10 soal)
+const questionsLevel3 = [
+  {q:"Kucing domestik termasuk ordo ...", choices:["Carnivora","Primata","Rodentia","Cetacea"], a:0},
+  {q:"Manusia masuk ke dalam famili ...", choices:["Cercopithecidae","Felidae","Hominidae","Canidae"], a:2},
+  {q:"Harimau (*Panthera tigris*) termasuk genus ...", choices:["Felis","Panthera","Canis","Homo"], a:1},
+  {q:"Jagung (*Zea mays*) termasuk famili ...", choices:["Rosaceae","Solanaceae","Poaceae","Fabaceae"], a:2},
+  {q:"Tomat (*Solanum lycopersicum*) termasuk genus ...", choices:["Solanum","Capsicum","Zea","Rosa"], a:0},
+  {q:"Mawar merah (*Rosa chinensis*) termasuk famili ...", choices:["Solanaceae","Rosaceae","Fabaceae","Poaceae"], a:1},
+  {q:"Paus biru termasuk ordo ...", choices:["Carnivora","Primata","Cetacea","Rodentia"], a:2},
+  {q:"Kelas burung disebut ...", choices:["Mammalia","Reptilia","Aves","Amphibia"], a:2},
+  {q:"Kelas ikan bertulang sejati disebut ...", choices:["Chondrichthyes","Agnatha","Osteichthyes","Pisces"], a:2},
+  {q:"Nama ilmiah manusia adalah ...", choices:["Homo erectus","Homo habilis","Homo sapiens","Pan troglodytes"], a:2}
+];
+
+// Gabungkan semua
+const allQuestions = [...questionsLevel1, ...questionsLevel2, ...questionsLevel3];
+
+// ==========================
+// LOGIKA QUIZ
+// ==========================
+let currentLevel = 0, qIndex=0, score=0, timer=0, timerInterval=null, startTime=null;
+
+document.getElementById('startBtn').onclick = startGame;
+
+function startGame(){
+  if(!document.getElementById('name').value.trim()){ alert('Masukkan nama!'); return; }
+  if(!document.getElementById('kelas').value.trim()){ alert('Masukkan kelas!'); return; }
+  if(!document.getElementById('absen').value.trim()){ alert('Masukkan no absen!'); return; }
+
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('quiz').style.display='block';
+
+  currentLevel = 0; qIndex=0; score=0;
+  loadLevel();
+}
+
+function loadLevel(){
+  const cfg = levels[currentLevel];
+  document.getElementById('level').innerText = 'Level ' + cfg.level;
+  timer = cfg.time;
+  document.getElementById('time').innerText = timer;
+  startTime = Date.now();
+
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    timer--; document.getElementById('time').innerText = timer;
+    if(timer<=0){ clearInterval(timerInterval); finishGame(); }
+  },1000);
+
+  showQuestion();
+}
+
+function showQuestion(){
+  const startIdx = currentLevel*10;
+  const q = allQuestions[startIdx + (qIndex % 10)];
+  document.getElementById('question-box').innerText = q.q;
+  const choices = document.getElementById('choices'); choices.innerHTML='';
+  q.choices.forEach((c,i)=>{
+    const btn = document.createElement('button');
+    btn.className='choice';
+    btn.innerText=c;
+    btn.onclick=()=>selectAnswer(i);
+    choices.appendChild(btn);
+  });
+}
+
+function selectAnswer(i){
+  const startIdx = currentLevel*10;
+  const q = allQuestions[startIdx + (qIndex % 10)];
+  const cfg = levels[currentLevel];
+  if(i===q.a){ score += cfg.points; document.getElementById('score').innerText='Skor: '+score; }
+  qIndex++;
+  if(qIndex>=10){ // selesai 10 soal di level ini
+    clearInterval(timerInterval);
+    currentLevel++;
+    if(currentLevel>=levels.length){ finishGame(); return; }
+    qIndex=0;
+    alert('Naik ke level berikutnya!');
+    loadLevel();
+  } else {
+    showQuestion();
+  }
+}
+
+function finishGame(){
+  clearInterval(timerInterval);
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('finish').style.display='block';
+  document.getElementById('finalScore').innerText = 
+    `Nama: ${document.getElementById('name').value} | Skor: ${score}`;
+}
+
+document.getElementById('submitBtn').onclick = sendResult;
+
+function sendResult(){
+  const payload = {
+    name: document.getElementById('name').value,
+    class: document.getElementById('kelas').value,
+    absen: document.getElementById('absen').value,
+    game: 'mcq',
+    score: score,
+    duration: Math.round((Date.now()-startTime)/1000),
+    details: {levelReached: currentLevel, totalAnswered: qIndex}
+  };
+  fetch(https://script.google.com/macros/s/AKfycbxriqMKF5lnhhqS4-O-tPQE48GU14RcPLB3ySCslGdANE4211Jk75-xz7Oh2tiR6vqi/exec, {
+    method:'POST',
+    body: JSON.stringify(payload),
+    headers:{'Content-Type':'application/json'}
+  }).then(r=>r.json()).then(d=>{
+    if(d.status==='success') alert('Hasil terkirim!'); else alert('Error: '+JSON.stringify(d));
+  }).catch(e=>alert('Gagal kirim: '+e));
+}
+</script>
+</body>
+</html>
