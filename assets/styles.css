@@ -54,7 +54,7 @@ h2 {
 }
 
 .choice:disabled {
-  background: #eee;
+  background: #00008B;
   color: #888;
   cursor: not-allowed;
 }
