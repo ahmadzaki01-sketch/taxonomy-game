@@ -25,7 +25,7 @@ Terdiri dari dua jenis permainan:
 ```javascript
 function doPost(e) {
   try {
-    var ss = SpreadsheetApp.openById("YOUR_SHEET_ID_HERE"); // ganti dengan ID sheet Anda
+    var ss = SpreadsheetApp.openById("1xx9GvdM7Esbr9X9Q1faNG4BWctqSxIMUjLHeSAd0YMo"); // ganti dengan ID sheet Anda
     var sheet = ss.getSheetByName("responses") || ss.insertSheet("responses");
     var payload = e.postData.contents;
     var data = JSON.parse(payload);
@@ -50,3 +50,4 @@ function doPost(e) {
                          .setMimeType(ContentService.MimeType.JSON);
   }
 }
+
