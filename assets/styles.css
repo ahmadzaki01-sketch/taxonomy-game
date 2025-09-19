@@ -44,7 +44,7 @@ h2 {
   border: 1px solid #ccc;
   border-radius: 6px;
   background: #fff;    /* kontras jelas */
-  color: #000;
+  color: #00008B;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
 }
